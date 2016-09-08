@@ -365,6 +365,6 @@ LoadPreviousState方法会恢复物体被抓取之前的一些重要状态。这
 
 ### Example
 
-`SteamVR_Unity_Toolkit/Examples/005_Controller_BasicObjectGrabbing` uses the `VRTK_InteractTouch` and `VRTK_InteractGrab` scripts on the controllers to show how an interactable object can be grabbed and snapped to the controller and thrown around the game world.
+`SteamVR_Unity_Toolkit/Examples/005_Controller_BasicObjectGrabbing` 使用`VRTK_InteractTouch`和 `VRTK_InteractGrab`脚本 scripts on the controllers to show how an interactable object can be grabbed and snapped to the controller and thrown around the game world.
 
 `SteamVR_Unity_Toolkit/Examples/013_Controller_UsingAndGrabbingMultipleObjects` shows mutltiple objects that can be grabbed by holding the buttons or grabbed by toggling the button click and also has objects that can have their Using state toggled to show how mutliple items can be turned on at the same time.

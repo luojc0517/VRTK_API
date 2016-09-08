@@ -44,7 +44,7 @@ namespace VRTK
         public event DestinationMarkerEventHandler DestinationMarkerSet;// 当destination marker是active时发送事件，确定最新的目标点 (可用于选择和传送).
 
         protected string invalidTargetWithTagOrClass;//如果一个target的tag或者class为这个字符串则为无效target
-        protected float navMeshCheckDistance;
+        protected float navMeshCheckDistance;// nav mesh采样距离
         protected bool headsetPositionCompensation;//是否考虑头显位移
 
         //发送事件，实际调用
@@ -84,9 +84,9 @@ namespace VRTK
         }
 
         /// <summary>
-        /// The SetNavMeshCheckDistance method sets the max distance the destination marker position can be from the edge of a nav mesh to be considered a valid destination.
+        /// SetNavMeshCheckDistance方法返回从标记点开始进行nav mesh采样的最大距离
         /// </summary>
-        /// <param name="distance">The max distance the nav mesh can be from the sample point to be valid.</param>
+        /// <param name="distance">nav mesh采样的最大距离.</param>
         public virtual void SetNavMeshCheckDistance(float distance)
         {
             navMeshCheckDistance = distance;
