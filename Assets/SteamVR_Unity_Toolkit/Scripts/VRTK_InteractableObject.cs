@@ -32,12 +32,12 @@ namespace VRTK
         /// </summary>
         public enum GrabAttachType
         {
-            Fixed_Joint,// 把物体和手柄在固定的节点连接，物体和手柄的旋转移动完全同步.
-            Spring_Joint,// 用弹簧关节连接物体和手柄意味着物体与手柄施加给它的力之间有一定的灵活性. 如果不想物体直接吸附到手柄上而是希望有一种拉扯的效果就可以使用这种. 它可以给人一种物体移动有阻力的错觉.
-            Track_Object,// 物体不会吸附在手柄上, 但是它会随着手柄的方向移动, 铰链关节的物体可以使用这种.
-            Rotator_Track,// 跟随手柄的动作旋转. 例如手柄控制门的开关.
-            Child_Of_Controller,// 让该物体直接变成手柄的一个子对象.
-            Climbable// 用来攀爬的非刚体结构可交互物体.
+            Fixed_Joint,// 物体和手柄以固定关节连接，抓取时为物体添加FixedJoint组件，连接至手柄上的刚体组件
+            Spring_Joint,// 物体和手柄以弹簧关节连接，抓取时为物体添加SpringJoint组件，连接至手柄上的刚体组件，让它们像被弹簧连接着一样联动
+            Track_Object,// 物体不会吸附在手柄上, 但是它会随着手柄的方向移动, 铰链关节的物体可以使用这种
+            Rotator_Track,// 跟随手柄的动作旋转.。例如手柄控制门的开关
+            Child_Of_Controller,// 让该物体直接变成手柄的一个子对象
+            Climbable// 用来攀爬的静态物体，不随手柄运动
         }
 
         /// <summary>
@@ -107,23 +107,23 @@ namespace VRTK
         public event InteractableObjectEventHandler InteractableObjectUsed;// 其他物体(例如手柄)使用当前物体时发送事件
         public event InteractableObjectEventHandler InteractableObjectUnused;// 其他物体停止使用当前物体时发送事件
 
-        protected Rigidbody rb;
+        protected Rigidbody rb;// 物体上的刚体组件
         protected GameObject touchingObject = null;// 正在触碰物体的游戏对象(例如手柄)
         protected GameObject grabbingObject = null;// 正在抓取物体的游戏对象(例如手柄)
         protected GameObject usingObject = null;// 正在使用物体的游戏对象(例如手柄)
 
-        private int usingState = 0;
+        private int usingState = 0;// 手柄对物体按下使用按钮的次数，如果物体不勾选`holdButtonToUse`，一个使用周期内第二次按下使用按钮，即`usingState>=2`，物体才会停止使用
         private Dictionary<string, Color[]> originalObjectColours;// 物体本身的材质颜色字典
 
         private Transform grabbedSnapHandle;// 被当前手柄抓取的部位，根据自己的设置和手柄的处理动态生成
-        private Transform trackPoint;// 追踪连接的连接点
-        private bool customTrackPoint = false;// 是否要定制追踪点，如果定制的话会有游戏对象生成，否则没有
-        private Transform originalControllerAttachPoint;// 初始手柄抓取点，是物体的一个子对象
+        private Transform trackPoint;// 追踪连接的连接点,手柄下有一个对应的默认子对象，也可以另外自己指定
+        private bool customTrackPoint = false;// 如果`trackPoint`就是手柄默认的那个连接点子对象，就为`false`,否则为`true`
+        private Transform originalControllerAttachPoint;// 物体的一个子对象，与`trackPoint`对应构成两个追踪连接点
 
-        private Transform previousParent;// 物体父对象的保存位置
-        private bool previousKinematicState;// 物体运动学状态的保存位置
-        private bool previousIsGrabbable;// 物体抓取状态的保存位置
-        private bool forcedDropped;// 强制使物体放下
+        private Transform previousParent;// 物体初始的父对象
+        private bool previousKinematicState;// 物体初始的`Kinematic`状态
+        private bool previousIsGrabbable;// 物体初始的可抓取属性
+        private bool forcedDropped;// 默认为`false`，在强制停止物体的方法执行后会置其为`true`，如果强制停止物体交互时脚本被禁用，那么下次脚本启用的时候看见这个参数为`true`就知道应该加载脚本被禁用之前的状态
 
         /// <summary>
         /// CheckHideMode方法是一个供其他脚本(例如InteractTouch InteractGrab InteractUse)使用的简单的方法，
@@ -279,11 +279,11 @@ namespace VRTK
 
             // 如果之前有别的手柄抓取该物体，要强行释放抓取
             ForceReleaseGrab();
-            // 移除追踪点
+            // 移除原来的追踪连接点
             RemoveTrackPoint();
             // 将当前的抓取手柄设置为传进来的新的手柄游戏对象
             grabbingObject = currentGrabbingObject;
-            // 追踪点也变成新的手柄游戏对象
+            // 设置新的追踪连接点
             SetTrackPoint(grabbingObject);
             if (!isSwappable)
             {
@@ -816,7 +816,7 @@ namespace VRTK
             }
             else
             {
-                // 追踪点就是手柄
+                // 追踪点就是手柄上的`controllerPoint`
                 trackPoint = controllerPoint;
                 customTrackPoint = false;
             }

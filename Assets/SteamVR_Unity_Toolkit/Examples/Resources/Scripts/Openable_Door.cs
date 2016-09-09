@@ -23,7 +23,7 @@ public class Openable_Door : VRTK_InteractableObject
     private bool open = false;// 如果当前手柄的使用目的是开门，为true，否则为false
 
     private Vector3 defaultRotation;// 门初始(关门)的世界旋转角度
-    private Vector3 openRotation;// 门的旋转角度，三维形式
+    private Vector3 openRotation;// 下一次使用时门的目标世界旋转角度
 
     /// <summary>
     /// 重写StartUsing方法
@@ -71,7 +71,7 @@ public class Openable_Door : VRTK_InteractableObject
     }
 
     /// <summary>
-    /// 设置门的旋转，只围绕y轴旋转
+    /// 设置门的开启后旋转角度，只围绕y轴旋转
     /// 角度是设置好的，主要是判断旋转的方向，根据sideFlip*side的结果来判断是拉门还是推门
     /// sideFlidp和side的值只会从1和-1中取，所以只要两者值正负一致，门都会围绕自己的y轴旋转doorOpenAngle，两者不一致时就会旋转-doorOpenAngle
     /// </summary>
