@@ -592,7 +592,7 @@ namespace VRTK
         {
             if (trackPoint)
             {
-                // 若trackPoint不为空
+                // 若追踪连接点不为空
                 switch (grabAttachMechanic)
                 {
                     case GrabAttachType.Rotator_Track:
@@ -855,9 +855,9 @@ namespace VRTK
         /// </summary>
         private void FixedUpdateRotatorTrack()
         {
-            // 方向是从初始抓取位置开始，指向当前的追踪点位置
+            // 方向是从物体追踪点开始，指向手柄追踪点位置
             var rotateForce = trackPoint.position - originalControllerAttachPoint.position;
-            // 在物体的初始抓取位置施加一个指向当前追踪点的力
+            // 在物体的追踪点位置施加一个指向手柄上追踪点的力
             rb.AddForceAtPosition(rotateForce, originalControllerAttachPoint.position, ForceMode.VelocityChange);
         }
 
@@ -942,7 +942,7 @@ namespace VRTK
                 }
                 else
                 {
-                    // 否则调用ForceStopUsing
+                    // 否则调用ForceResetUsing
                     usingObject.ForceResetUsing();
                 }
             }
